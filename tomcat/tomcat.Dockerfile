@@ -1,6 +1,6 @@
 FROM tomcat:8-jre8-openjdk-slim
 
-ENV MEM_OPTS="-Xmx500m -Xms256m"
+ENV MEM_OPTS="-Xmx256m -Xms128m"
 ENV GRADLE_OPTS="-server $MEM_OPTS -XX:+UseParallelGC -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99 -Dorg.gradle.daemon=false"
 ENV JAVA_OPTS="$JAVA_OPTS -Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true $MEM_OPTS -XX:+UseParallelGC -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99"
 
