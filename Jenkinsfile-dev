@@ -10,7 +10,7 @@ pipeline{
                 }
 */            }
         }
-		stage ("cleaning"){
+	stage ("cleaning"){
             steps{
                 echo "cleaning"
 /*                sshagent(credentials: ['ec2-user']) {
@@ -20,7 +20,7 @@ pipeline{
                 }
 */            }
         }
-		stage("Poling source from SCM"){
+	stage("Poling source from SCM"){
             steps{
                 echo "Poling source from SCM"
 /*                sshagent(credentials: ['ec2-user']) {
@@ -39,7 +39,7 @@ pipeline{
                 }
 */            }
         }
-		stage("build mine"){
+	stage("build mine"){
 //            options {timeout(time: 6, unit: "SECONDS")}
             steps{
 //                catchError(catchInterruptions: true, buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
@@ -62,7 +62,7 @@ pipeline{
 //            }
             }
 		}
-		stage('http_200_Test') {
+	stage('http_200_Test') {
             steps {
                 script {
                     sleep (time: 5)
