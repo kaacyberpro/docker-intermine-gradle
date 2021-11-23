@@ -8,7 +8,7 @@ agent any
 /*                sshagent(credentials: ['ec2-user']) {
                     sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 18.217.236.236 terraform -chdir=/home/ec2-user/improject/infrastructure apply -auto-approve -target module.env_dev'                }
                 }
-*/            }
+*/            } 
         }
 	stage ("cleaning"){
             steps{
