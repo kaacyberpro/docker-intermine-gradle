@@ -44,7 +44,7 @@ pipeline{
 //            options {timeout(time: 6, unit: "SECONDS")}
             steps{
 //                catchError(catchInterruptions: true, buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-               script { 
+                script { 
                     try { 
                         timeout(time: 6, unit: "SECONDS"){
                             echo "Started stage build mine"
