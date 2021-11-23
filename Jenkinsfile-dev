@@ -34,7 +34,7 @@ agent any
             steps{
                 echo "Started stage Creating folders"
 /*                sshagent(credentials: ['ec2-user']) {
-				    //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 ./mkdatadirs.sh ./local.docker-compose.yml'
+		    //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 ./mkdatadirs.sh ./local.docker-compose.yml'
                     sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 ./docker-intermine-gradle/mkdatadirs.sh ./docker-intermine-gradle/local.docker-compose.yml'
                 }
 */            }
