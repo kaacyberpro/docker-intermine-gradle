@@ -1,0 +1,89 @@
+pipeline{
+	agent any
+    stages{
+
+        stage ("deploy dev env"){
+            steps{
+                echo "deploy dev env"
+/*                sshagent(credentials: ['ec2-user']) {
+                    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 18.217.236.236 terraform -chdir=/home/ec2-user/improject/infrastructure apply -auto-approve -target module.env_dev'                }
+					
+                }
+*/            }
+        }
+		stage ("cleaning"){
+            steps{
+                echo "cleaning"
+/*                sshagent(credentials: ['ec2-user']) {
+                    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker container prune -f'
+					sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker image prune -af'
+					sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 sudo rm -fr /home/ec2-user/*'
+                }
+*/            }
+        }
+		stage("Poling source from SCM"){
+            steps{
+                echo "Poling source from SCM"
+/*                sshagent(credentials: ['ec2-user']) {
+                    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 git clone https://github.com/kaacyberpro/docker-intermine-gradle'
+                    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 cp -r docker-intermine-gradle/* .'
+					//sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 mv docker-intermine-gradle/* /home/ec2-user'
+                }
+*/            }
+        }
+        stage("Creating folders"){
+            steps{
+                echo "Started stage Creating folders"
+/*                sshagent(credentials: ['ec2-user']) {
+				    //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 ./mkdatadirs.sh ./local.docker-compose.yml'
+                    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 ./docker-intermine-gradle/mkdatadirs.sh ./docker-intermine-gradle/local.docker-compose.yml'
+                }
+*/            }
+        }
+		stage("build mine"){
+//            options {timeout(time: 6, unit: "SECONDS")}
+            steps{
+//                catchError(catchInterruptions: true, buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+               script { 
+                    try { 
+                        timeout(time: 6, unit: "SECONDS"){
+                            echo "Started stage build mine"
+//                            sleep(time: 50, unit: "SECONDS")
+                            sshagent(credentials: ['ec2-user']) {
+                                //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker-compose --project-directory docker-intermine-gradle -f docker-intermine-gradle/dockerhub.docker-compose.yml up
+                                //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker-compose -f dockerhub.docker-compose.yml up'
+                                sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 echo "messege from dev env"'
+                            }
+                        }
+                    }
+                    catch (error) {
+                        println "Error happened, continuing"
+                    }
+                }
+//            }
+            }
+		}
+		stage('http_200_Test') {
+            steps {
+                script {
+                    sleep (time: 5)
+                    //httpRequest plugin needed
+                    def response = httpRequest (
+                        url: "http://10.0.2.20:9999/biotestmine",
+                        timeout: 30
+                    )
+                    if (response.status != 200) {
+                        error("Build test of deployment failed.")
+                    }
+                }
+            }
+        }
+        stage('deploy to prod?') {
+            steps {
+                timeout(time: 60, unit: "SECONDS"){
+                    input 'Does the dev environment look OK?'
+                }
+            }
+        }
+    }
+}
