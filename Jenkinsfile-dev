@@ -85,5 +85,16 @@ pipeline{
                 }
             }
         }
+	stage ("destroy dev env"){
+            steps{
+                echo "destroy dev env"
+		timeout(time: 60, unit: "SECONDS"){
+                    input 'destroy dev env?'
+			sshagent(credentials: ['ec2-user']) {
+		 		sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 18.217.236.236 terraform -chdir=/home/ec2-user/improject/infrastructure destroy -auto-approve -target module.env_dev'                
+			}
+		}
+            }
+        }
     }
 }
