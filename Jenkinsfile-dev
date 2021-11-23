@@ -50,8 +50,8 @@ agent any
 //                            sleep(time: 50, unit: "SECONDS")
                             sshagent(credentials: ['ec2-user']) {
                                 //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker-compose --project-directory docker-intermine-gradle -f docker-intermine-gradle/dockerhub.docker-compose.yml up
-                                //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker-compose -f dockerhub.docker-compose.yml up'
-                                sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 echo "messege from dev env"'
+                                sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker-compose -f dockerhub.docker-compose.yml up'
+                                //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 echo "messege from dev env"'
                             }
                         }
                     }
