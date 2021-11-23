@@ -15,9 +15,10 @@ pipeline{
             steps{
                 echo "Poling source from SCM"
                 sshagent(credentials: ['ec2-user']) {
-                    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 git clone https://github.com/kaacyberpro/docker-intermine-gradle'
-                    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 cp -r docker-intermine-gradle/* .'
-					//sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 mv docker-intermine-gradle/* /home/ec2-user'
+			sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 docker container kill $(docker container ps -aq) > /dev/null 2>&1 | true'
+                    	sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 git clone https://github.com/kaacyberpro/docker-intermine-gradle'
+                    	sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 cp -r docker-intermine-gradle/* .'
+		    	//sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 mv docker-intermine-gradle/* /home/ec2-user'
                 }
             }
         }
