@@ -15,8 +15,8 @@ agent any
                 echo "cleaning"
 /*                sshagent(credentials: ['ec2-user']) {
                     sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker container prune -f'
-					sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker image prune -af'
-					sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 sudo rm -fr /home/ec2-user/*'
+		    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 docker image prune -af'
+		    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.20 sudo rm -fr /home/ec2-user/*'
                 }
 */            }
         }
