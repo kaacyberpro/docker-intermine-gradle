@@ -45,7 +45,7 @@ agent any
 //                catchError(catchInterruptions: true, buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
                 script { 
                     try { 
-                        timeout(time: 6, unit: "SECONDS"){
+                        timeout(time: 600, unit: "SECONDS"){
                             echo "Started stage build mine"
 //                            sleep(time: 50, unit: "SECONDS")
                             sshagent(credentials: ['ec2-user']) {
