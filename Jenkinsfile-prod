@@ -1,37 +1,36 @@
 pipeline{
-	agent any
+    agent any
     stages{
-		stage ("cleaning"){
+        stage ("cleaning"){
             steps{
                 echo "cleaning"
-                sshagent(credentials: ['ec2-user']) {
-			sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 docker container kill $(docker container ps -aq) > /dev/null 2>&1 | true'
-                    	sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 docker container prune -f'
-			sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 docker image prune -af'
-//			sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 sudo rm -fr /home/ec2-user/*'
+                withCredentials([sshUserPrivateKey(credentialsId: 'env_l_prod', keyFileVariable: 'KEY', usernameVariable: 'USER')]) {
+                    sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY docker container kill $(docker container ps -aq) > /dev/null 2>&1 | true'
+                    sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY docker container prune -f'
+                    sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY docker image prune -af'
+                    sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY sudo rm -fr /home/ec2-user/*'
                 }
             }
         }
-		stage("Poling source from SCM"){
+        stage("Poling source from SCM"){
             steps{
                 echo "Poling source from SCM"
-                sshagent(credentials: ['ec2-user']) {
-                    	sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 git clone https://github.com/kaacyberpro/docker-intermine-gradle'
-                    	sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 cp -r docker-intermine-gradle/* .'
-		    	//sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 mv docker-intermine-gradle/* /home/ec2-user'
+                withCredentials([sshUserPrivateKey(credentialsId: 'env_l_prod', keyFileVariable: 'KEY', usernameVariable: 'USER')]) {
+                    sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY git clone https://github.com/kaacyberpro/docker-intermine-gradle'
+                    sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY  cp -r docker-intermine-gradle/* .'
                 }
             }
         }
         stage("Creating folders"){
             steps{
                 echo "Started stage Creating folders"
-                sshagent(credentials: ['ec2-user']) {
-				    //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 ./mkdatadirs.sh ./local.docker-compose.yml'
-                    sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 ./docker-intermine-gradle/mkdatadirs.sh ./docker-intermine-gradle/local.docker-compose.yml'
+                withCredentials([sshUserPrivateKey(credentialsId: 'env_l_prod', keyFileVariable: 'KEY', usernameVariable: 'USER')]) {
+                    //sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY ./mkdatadirs.sh ./local.docker-compose.yml'
+                    sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY ./docker-intermine-gradle/mkdatadirs.sh ./docker-intermine-gradle/local.docker-compose.yml'
                 }
             }
         }
-		stage("build mine"){
+        stage("build mine"){
 //            options {timeout(time: 6, unit: "SECONDS")}
             steps{
 //                catchError(catchInterruptions: true, buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
@@ -40,9 +39,10 @@ pipeline{
                         timeout(time: 600, unit: "SECONDS"){
                             echo "Started stage build mine"
 //                            sleep(time: 50, unit: "SECONDS")
-                            sshagent(credentials: ['ec2-user']) {
-                                //sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 docker-compose --project-directory docker-intermine-gradle -f docker-intermine-gradle/dockerhub.docker-compose.yml up
-                                sh 'ssh -o StrictHostKeyChecking=no -l ec2-user 10.0.2.30 docker-compose -f dockerhub.docker-compose.yml up'
+                            withCredentials([sshUserPrivateKey(credentialsId: 'env_l_prod', keyFileVariable: 'KEY', usernameVariable: 'USER')]) {
+                                //sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY docker-compose --project-directory docker-intermine-gradle -f docker-intermine-gradle/dockerhub.docker-compose.yml up
+                                sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY docker-compose -f dockerhub.docker-compose.yml up'
+                                //sh 'ssh $USER -o StrictHostKeyChecking=no -i $KEY echo "messege from dev env"'
                             }
                         }
                     }
@@ -52,8 +52,8 @@ pipeline{
                 }
 //            }
             }
-		}
-		stage('http_200_Test') {
+        }
+        stage('http_200_Test') {
             steps {
                 script {
                     sleep (time: 5)
